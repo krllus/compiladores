@@ -1,15 +1,16 @@
 # I am a comment, and I want to say that the variable CC will be
 # the compiler to use.
-FLEX=flex
-CC=cc
+FLEX = flex
+CC = g++
+MAIN = cafezinho
 
-all: cafezinho
-	$(CC) -o teste lexico.cpp
-	@echo "cafezinho pronto"	
+all: $(MAIN)
+	$(CC) -o $(MAIN) lexico.cpp
+	@echo "cafezinho pronto"
 
-cafezinho: lexico sintatico
+$(MAIN): lexico sintatico
 
-lexico:
+lexico: cafezinho.lex
 	$(FLEX) -o lexico.cpp cafezinho.lex
 	@echo "lexico pronto"
 
@@ -17,4 +18,4 @@ sintatico:
 	@echo "sintatico pronto"
 
 clean:
-	rm *.cpp
+	rm *.cpp $(MAIN)
