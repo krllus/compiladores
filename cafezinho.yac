@@ -1,0 +1,149 @@
+%{
+    #include <stdio.h>
+    
+    int yylex(void);
+    void yyerror(const char *s);
+
+    extern int yylineno;
+%}
+
+%token ID INT CAR INTCONST CARCONST CADEIACAR
+%token PROGRAMA RETORNE LEIA ESCREVA
+%token NOVALINHA SE ENTAO SENAO 
+%token OU_OP E_OP EQ_OP NE_OP GE_OP LE_OP
+%token ENQUANTO EXECUTE
+
+%%
+
+Programa:
+    DeclFuncVar DeclProg			{printf("LÉXICA E SINTÁTICAMENTE CORRETO\n");};
+
+DeclFuncVar:
+    Tipo ID DeclVar ';' DeclFuncVar|
+    Tipo ID'['INTCONST']' DeclVar ';' DeclFuncVar|
+    Tipo ID DeclFunc DeclFuncVar| ;
+
+DeclProg :
+    PROGRAMA Bloco;
+
+DeclVar :
+    ',' ID DeclVar|
+    ',' ID'['INTCONST']' DeclVar| ;
+
+DeclFunc :
+    '('ListaParametros')' Bloco;
+
+ListaParametros :
+    ListaParametrosCont| ;
+
+ListaParametrosCont :
+    Tipo ID|
+    Tipo ID'['']'|
+    Tipo ID ',' ListaParametrosCont|
+    Tipo ID'['']' ',' ListaParametrosCont;
+
+Bloco :
+    '{' ListaDeclVar ListaComando '}'|
+    '{' ListaDeclVar '}';
+
+ListaDeclVar:
+    Tipo ID DeclVar ';' ListaDeclVar|
+    Tipo ID'['INTCONST']' DeclVar ';' ListaDeclVar | ;
+
+Tipo :
+    INT | CAR;
+
+ListaComando: 
+    Comando|
+    Comando ListaComando;
+
+Comando:
+    ';'|
+    Expr ';'|
+    RETORNE Expr ';'|
+    LEIA LValueExpr ';'|
+    ESCREVA CADEIACAR ';'|
+    ESCREVA Expr ';'|
+    NOVALINHA|
+    SE '(' Expr ')' ENTAO Comando|
+    SE '(' Expr ')' ENTAO Comando SENAO Comando|
+    ENQUANTO '(' Expr ')' EXECUTE Comando|
+    Bloco;
+
+Expr:
+    AssignExpr;
+
+AssignExpr:
+    CondExpr|
+    LValueExpr '=' AssignExpr;
+
+CondExpr:
+    OrExpr|
+    OrExpr '?' Expr ':' CondExpr;
+
+OrExpr:
+    OrExpr OU_OP AndExpr|
+    AndExpr;
+
+AndExpr:
+    AndExpr E_OP EqExpr|
+    EqExpr;
+
+EqExpr:
+    EqExpr EQ_OP DesigExpr|
+    EqExpr NE_OP DesigExpr|
+    DesigExpr;
+
+DesigExpr:
+    DesigExpr '<' AddExpr|
+    DesigExpr '>' AddExpr|
+    DesigExpr GE_OP AddExpr|
+    DesigExpr LE_OP AddExpr|
+    AddExpr;
+
+AddExpr:
+    AddExpr '+' MulExpr|
+    AddExpr '-' MulExpr|
+    MulExpr;
+
+MulExpr:
+    MulExpr '*' UnExpr|
+    MulExpr '/' UnExpr|
+    MulExpr '%' UnExpr|
+    UnExpr;
+
+UnExpr:
+    '-'PrimExpr|
+    '!'PrimExpr|
+    PrimExpr;
+
+LValueExpr:
+    ID'[' Expr ']'|
+    ID;
+
+PrimExpr:
+    ID'(' ListExpr ')'|
+    ID'('')'|
+    ID'[' Expr ']'|
+    ID|
+    CARCONST|
+    INTCONST|
+    '(' Expr ')';
+
+ListExpr:
+    AssignExpr|
+    ListExpr ',' AssignExpr;
+
+%%
+
+void yyerror(const char *s) {
+    printf("ERRO: %s in line %d\n", s, yylineno);
+    exit(-1);
+}
+
+/**
+ * main function
+ */
+int main(int argc, char* argv[]) {
+    yyparse();
+}

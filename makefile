@@ -1,21 +1,28 @@
 # I am a comment, and I want to say that the variable CC will be
 # the compiler to use.
 FLEX = flex
+BISON = bison
 CC = g++
 MAIN = cafezinho
 
-all: $(MAIN)
-	$(CC) -o $(MAIN) lexico.cpp
+all: sintatico lexico
+	$(CC) -o $(MAIN) sintatico.cpp lexico.cpp	
 	@echo "cafezinho pronto"
 
-$(MAIN): lexico sintatico
+simple: cafezinho.lex cafezinho.yac	
+	$(BISON) -d -o sintatico.cpp cafezinho.yac
+	$(FLEX) -o lexico.cpp cafezinho.lex
+	$(CC) -o $(MAIN) sintatico.cpp lexico.cpp
+	@echo "cafezinho pronto"
 
 lexico: cafezinho.lex
 	$(FLEX) -o lexico.cpp cafezinho.lex
 	@echo "lexico pronto"
 
-sintatico:
+sintatico: cafezinho.yac
+	$(BISON) -d -o sintatico.cpp cafezinho.yac
 	@echo "sintatico pronto"
 
 clean:
-	rm *.cpp $(MAIN)
+	rm *.cpp *.hpp $(MAIN)
+	@echo "clean pronto"
