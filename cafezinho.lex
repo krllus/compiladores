@@ -38,7 +38,8 @@ ID 	  	[_a-zA-Z][_a-zA-Z0-9]*
 <INITIAL>{
 
 	/* handle comments in the language */
-	"/*"		BEGIN(IN_COMMENT);
+	"/*"		{ BEGIN(IN_COMMENT); }
+	"//".* 		{ /* ignore comments */ }
 
 	/* reserved words in the language */
 	"car"		{ return(CAR);}
@@ -57,6 +58,7 @@ ID 	  	[_a-zA-Z][_a-zA-Z0-9]*
 	"ou"		{ return(OU_OP);}
 
 	['].[']		{ return(CARCONST);}
+	["].*["]	{ return(CADEIACAR);}
 	{DIGIT}+   	{ return(INTCONST);}
 	{ID}+		{ return(ID);}
 
