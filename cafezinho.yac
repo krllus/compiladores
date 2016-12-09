@@ -1,5 +1,6 @@
 %{
     #include <stdio.h>
+    #include "tipos.h"
     
     int yylex(void);
     void yyerror(const char *s);
@@ -7,11 +8,14 @@
     extern int yylineno;
 %}
 
+%token PROGRAMA RETORNE 
 %token ID INT CAR INTCONST CARCONST CADEIACAR
-%token PROGRAMA RETORNE LEIA ESCREVA
-%token NOVALINHA SE ENTAO SENAO 
+%token LEIA ESCREVA
+%token SE ENTAO SENAO 
+%token ENQUANTO
 %token OU_OP E_OP EQ_OP NE_OP GE_OP LE_OP
-%token ENQUANTO EXECUTE
+%token NOVALINHA
+%token EXECUTE
 
 %%
 
