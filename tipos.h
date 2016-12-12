@@ -1,25 +1,9 @@
-#ifndef _tipos_h
-#define _tipos_h
+#ifndef _tipos_
+#define _tipos_
 
 typedef enum{
-	lstStmt, 
-	If, While, Do, 
-	Num, 
-	Mais, Mult, Menor, Igual, MenorIgual} 
-	TespecieOperador;
-
-//Definicao de um no da arvore abstrata.
-typedef struct operador{
-    TespecieOperador tipoOperador;// for, if, id, etc
-    int  linha;
-    char* lexema; // utilizado apenas em nos da especie Num para armazenar o lexa do numero
-    struct operador* filho1;
-    struct operador* filho2;
-} Toperador;
-
-typedef enum _NodeType{
 	NO_PROGRAMA,
-	NO_DECLPROGRAMA,
+	NO_DECLPROGRAMA,	
 	NO_DECLFUNCVAR,
 	NO_DECLFUNC,
 	NO_DECLVAR,
@@ -51,7 +35,7 @@ typedef enum _NodeType{
 	NO_CADEIACAR,
 } NodeType;
 
-typedef enum _OperatorType{
+typedef enum {
 	OP_MAIS=1, 	// +
   	OP_MENOS, 	// -
   	OP_MULT, 	// *
@@ -69,17 +53,6 @@ typedef enum _OperatorType{
   	OP_NEG, 	// [NEG]ativo
   	OP_NAO, 	// !
 } OperatorType;
-
-typedef struct _Node{
-	NodeType nodeType;
-
-	struct _Node * data1;
-	struct _Node * data2;
-	struct _Node * data3;
-	struct _Node * data4;
-
-	char* lexema;
-} Node;
 
 
 #endif

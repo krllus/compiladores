@@ -20,11 +20,9 @@ Toperador* raiz;
 char nomeOperador[200];
 
 
-
 %}
-/* Secao de definicoes para o Bison 
- define os simbolos usados na gramatica e tipos dos valores
- semanticos associados a cada simbolo (terminal e não terminal)*/
+
+/* Secao de definicoes para o Bison define os simbolos usados na gramatica e tipos dos valores semanticos associados a cada simbolo (terminal e não terminal)*/
 
 %union{
     int nlinha;

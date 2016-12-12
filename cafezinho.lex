@@ -2,7 +2,6 @@
 /* CODE BLOCK */
 #include <stdio.h>
 #include "sintatico.hpp"
-#include "./tipos.h"
 
 char ERROR_INVALID_CHARACTER [] = "CARACTERE INVALIDO";
 char ERROR_NOT_ENDING_COMMENT []= "COMENTARIO NAO TERMINA";

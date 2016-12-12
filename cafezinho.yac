@@ -2,29 +2,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
-#include "./tipos.h"
-    
+#include "tipos.h"
+#include "nodes.h"
+
+
 int yylex(void);
 void yyerror(const char *s);
 
 extern int yylineno;
 
-Node * createNode(NodeType nodeType){
-    Node * aux = (Node*) malloc(sizeof(Node));
-    
-    if(aux){
-        aux->nodeType = nodeType;
-
-        aux->data1 = NULL;
-        aux->data2 = NULL;
-        aux->data3 = NULL;
-        aux->data4 = NULL;
-
-        return aux;
-    }
-
-    return NULL;
-}
 
 void GenerateTree();
 
@@ -34,7 +20,7 @@ Node * root;
 
 %union{
     int integer;
-    Node * node;
+    struct _Node * node;
     char * str;
 }
 
