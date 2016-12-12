@@ -1,15 +1,51 @@
 %{
-    #include <stdio.h>
-    #include "tipos.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <strings.h>
+#include "./tipos.h"
     
-    int yylex(void);
-    void yyerror(const char *s);
+int yylex(void);
+void yyerror(const char *s);
 
-    extern int yylineno;
+extern int yylineno;
+
+Node * createNode(NodeType nodeType){
+    Node * aux = (Node*) malloc(sizeof(Node));
+    
+    if(aux){
+        aux->nodeType = nodeType;
+
+        aux->data1 = NULL;
+        aux->data2 = NULL;
+        aux->data3 = NULL;
+        aux->data4 = NULL;
+
+        return aux;
+    }
+
+    return NULL;
+}
+
+void GenerateTree();
+
+Node * root;
+
 %}
 
+%union{
+    int integer;
+    Node * node;
+    char * str;
+}
+
+%start Programa /* Inidica que o simbolo incial da gramatica e programm */
+
+%token <integer> INTCONST 
+%token <node> ID
+%token <str> CARCONST 
+%token <str> CADEIACAR
 %token PROGRAMA RETORNE 
-%token ID INT CAR INTCONST CARCONST CADEIACAR
+%token INT CAR 
 %token LEIA ESCREVA
 %token SE ENTAO SENAO 
 %token ENQUANTO
@@ -17,126 +53,288 @@
 %token NOVALINHA
 %token EXECUTE
 
+%type <node> Programa DeclFuncVar DeclProg DeclVar DeclFunc ListaParametros ListaParametrosCont Bloco
+%type <node> ListaDeclVar Tipo ListaComando Expr AssignExpr OrExpr AndExpr EqExpr
+%type <node> DesigExpr AddExpr MulExpr UnExpr LValueExpr PrimExpr ListExpr
+%type <node> Comando CondExpr
+
 %%
 
 Programa:
-    DeclFuncVar DeclProg			{printf("LÉXICA E SINTÁTICAMENTE CORRETO\n");};
+    DeclFuncVar DeclProg			{
+        printf("LÉXICA E SINTÁTICAMENTE CORRETO\n"); 
+        Node * aux = createNode(NO_PROGRAMA);
+        aux->data1 = $1;
+        aux->data2 = $2;
+        root = $$;
+    };
 
 DeclFuncVar:
-    Tipo ID DeclVar ';' DeclFuncVar|
-    Tipo ID'['INTCONST']' DeclVar ';' DeclFuncVar|
-    Tipo ID DeclFunc DeclFuncVar| ;
+    Tipo ID DeclVar ';' DeclFuncVar {
+        Node * aux = createNode(NO_ID);
+        aux->data1 = $2;
+        $$ = aux;
+        
+    }|
+    
+    Tipo ID'['INTCONST']' DeclVar ';' DeclFuncVar{
+        
+    }|
+
+    Tipo ID DeclFunc DeclFuncVar{
+        
+    }|{
+        $$ = NULL;
+    };
 
 DeclProg :
-    PROGRAMA Bloco;
+    PROGRAMA Bloco {
+        $$ = NULL;
+    }; 
 
 DeclVar :
-    ',' ID DeclVar|
-    ',' ID'['INTCONST']' DeclVar| ;
+    ',' ID DeclVar {
+       $$ = NULL; 
+    }|
+
+    ',' ID'['INTCONST']' DeclVar{
+        $$ = NULL;
+    }|{
+        $$ = NULL;
+    };
 
 DeclFunc :
-    '('ListaParametros')' Bloco;
+    '('ListaParametros')' Bloco{
+        $$ = NULL;
+    };
 
 ListaParametros :
-    ListaParametrosCont| ;
+    ListaParametrosCont{
+        $$ = NULL;
+    }| ;
 
 ListaParametrosCont :
-    Tipo ID|
-    Tipo ID'['']'|
-    Tipo ID ',' ListaParametrosCont|
-    Tipo ID'['']' ',' ListaParametrosCont;
+    Tipo ID {
+        $$ = NULL;
+    }|
+    Tipo ID'['']'{
+        $$ = NULL;
+    }|
+    Tipo ID ',' ListaParametrosCont{
+        $$ = NULL;
+    }|
+    Tipo ID'['']' ',' ListaParametrosCont{
+        $$ = NULL;
+    };
 
 Bloco :
-    '{' ListaDeclVar ListaComando '}'|
-    '{' ListaDeclVar '}';
+    '{' ListaDeclVar ListaComando '}'{
+        $$ = NULL;
+    }|
+    '{' ListaDeclVar '}'{
+        $$ = NULL;
+    };
 
 ListaDeclVar:
-    Tipo ID DeclVar ';' ListaDeclVar|
-    Tipo ID'['INTCONST']' DeclVar ';' ListaDeclVar | ;
+    Tipo ID DeclVar ';' ListaDeclVar{
+        $$ = NULL;
+    }|
+    Tipo ID'['INTCONST']' DeclVar ';' ListaDeclVar {
+        $$ = NULL;
+    }|{
+        $$ = NULL;
+    };
 
 Tipo :
-    INT | CAR;
+    INT {
+        $$ = NULL;
+    }|
+    CAR{
+        $$ = NULL;
+    };
 
 ListaComando: 
-    Comando|
-    Comando ListaComando;
+    Comando {
+        $$ = NULL;
+    }|
+    Comando ListaComando{
+        $$ = NULL;
+    };
 
 Comando:
-    ';'|
-    Expr ';'|
-    RETORNE Expr ';'|
-    LEIA LValueExpr ';'|
-    ESCREVA CADEIACAR ';'|
-    ESCREVA Expr ';'|
-    NOVALINHA|
-    SE '(' Expr ')' ENTAO Comando|
-    SE '(' Expr ')' ENTAO Comando SENAO Comando|
-    ENQUANTO '(' Expr ')' EXECUTE Comando|
-    Bloco;
+    ';'{
+        $$ = NULL;
+    }|
+    Expr ';'{
+        $$ = NULL;
+    }|
+    RETORNE Expr ';'{
+        $$ = NULL;
+    }|
+    LEIA LValueExpr ';'{
+        $$ = NULL;
+    }|
+    ESCREVA CADEIACAR ';'{
+        $$ = NULL;
+    }|
+    ESCREVA Expr ';'{
+        $$ = NULL;
+    }|
+    NOVALINHA{
+        $$ = NULL;
+    }|
+    SE '(' Expr ')' ENTAO Comando{
+        $$ = NULL;
+    }|
+    SE '(' Expr ')' ENTAO Comando SENAO Comando{
+        $$ = NULL;
+    }|
+    ENQUANTO '(' Expr ')' EXECUTE Comando{
+        $$ = NULL;
+    }|
+    Bloco{
+        $$ = NULL;
+    };
 
 Expr:
-    AssignExpr;
+    AssignExpr{
+        $$ = NULL;
+    };
 
 AssignExpr:
-    CondExpr|
-    LValueExpr '=' AssignExpr;
+    CondExpr{
+        $$ = NULL;
+    }|
+    LValueExpr '=' AssignExpr {
+        $$ = NULL;
+    };
 
 CondExpr:
-    OrExpr|
-    OrExpr '?' Expr ':' CondExpr;
+    OrExpr {
+        $$ = NULL;
+    }|
+    OrExpr '?' Expr ':' CondExpr{
+        $$ = NULL;
+    };
 
 OrExpr:
-    OrExpr OU_OP AndExpr|
-    AndExpr;
+    OrExpr OU_OP AndExpr{
+        $$ = NULL;
+    }|
+    AndExpr{
+        $$ = NULL;
+    };
 
 AndExpr:
-    AndExpr E_OP EqExpr|
-    EqExpr;
+    AndExpr E_OP EqExpr{
+        $$ = NULL;
+    }|
+    EqExpr{
+        $$ = NULL;
+    };
 
 EqExpr:
-    EqExpr EQ_OP DesigExpr|
-    EqExpr NE_OP DesigExpr|
-    DesigExpr;
+    EqExpr EQ_OP DesigExpr{
+        $$ = NULL;
+    }|
+    EqExpr NE_OP DesigExpr{
+        $$ = NULL;
+    }|
+    DesigExpr{
+        $$ = NULL;
+    };
 
 DesigExpr:
-    DesigExpr '<' AddExpr|
-    DesigExpr '>' AddExpr|
-    DesigExpr GE_OP AddExpr|
-    DesigExpr LE_OP AddExpr|
-    AddExpr;
+    DesigExpr '<' AddExpr{
+        $$ = NULL;
+    }|
+    DesigExpr '>' AddExpr{
+        $$ = NULL;
+    }|
+    DesigExpr GE_OP AddExpr{
+        $$ = NULL;
+    }|
+    DesigExpr LE_OP AddExpr{
+        $$ = NULL;
+    }|
+    AddExpr{
+        $$ = NULL;
+    };
 
 AddExpr:
-    AddExpr '+' MulExpr|
-    AddExpr '-' MulExpr|
-    MulExpr;
+    AddExpr '+' MulExpr {
+        $$ = NULL;
+    }|
+    AddExpr '-' MulExpr{
+        $$ = NULL;
+    }|
+    MulExpr{
+        $$ = NULL;
+    };
 
 MulExpr:
-    MulExpr '*' UnExpr|
-    MulExpr '/' UnExpr|
-    MulExpr '%' UnExpr|
-    UnExpr;
+    MulExpr '*' UnExpr{
+        $$ = NULL;
+    }|
+    MulExpr '/' UnExpr{
+        $$ = NULL;
+    }|
+    MulExpr '%' UnExpr{
+        $$ = NULL;
+    }|
+    UnExpr{
+        $$ = NULL;
+    };
 
 UnExpr:
-    '-'PrimExpr|
-    '!'PrimExpr|
-    PrimExpr;
+    '-'PrimExpr{
+        $$ = NULL;
+    }|
+    '!'PrimExpr{
+        $$ = NULL;
+    }|
+    PrimExpr{
+        $$ = NULL;
+    };
 
 LValueExpr:
-    ID'[' Expr ']'|
-    ID;
+    ID'[' Expr ']'{
+        $$ = NULL;
+    }|
+    ID{
+        $$ = NULL;
+    };
 
 PrimExpr:
-    ID'(' ListExpr ')'|
-    ID'('')'|
-    ID'[' Expr ']'|
-    ID|
-    CARCONST|
-    INTCONST|
-    '(' Expr ')';
+    ID'(' ListExpr ')'{
+        $$ = NULL;
+    }|
+    ID'('')'{
+        $$ = NULL;
+    }|
+    ID'[' Expr ']'{
+        $$ = NULL;
+    }|
+    ID{
+        $$ = NULL;
+    }|
+    CARCONST{
+        $$ = NULL;
+    }|
+    INTCONST{
+        $$ = NULL;
+    }|
+    '(' Expr ')'{
+        $$ = NULL;
+    };
 
 ListExpr:
-    AssignExpr|
-    ListExpr ',' AssignExpr;
+    AssignExpr{
+        $$ = NULL;
+    }|
+    ListExpr ',' AssignExpr{
+        $$ = NULL;
+    };
 
 %%
 
@@ -150,4 +348,8 @@ void yyerror(const char *s) {
  */
 int main(int argc, char* argv[]) {
     yyparse();
+}
+
+void generateTree(){
+
 }
