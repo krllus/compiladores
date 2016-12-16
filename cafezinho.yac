@@ -13,6 +13,13 @@ extern int yylineno;
 
 
 void GenerateTree();
+void toString(char* str, int num){
+    sprintf(str, "%d", num);
+}
+
+void textString(char* aux, char str[256]){
+    sprintf(aux, "%s", str);   
+}
 
 Node * root;
 
@@ -49,163 +56,337 @@ Node * root;
 Programa:
     DeclFuncVar DeclProg			{
         printf("LÉXICA E SINTÁTICAMENTE CORRETO\n"); 
-        Node * aux = createNode(NO_PROGRAMA);
-        aux->data1 = $1;
-        aux->data2 = $2;
+        Node * aux1 = createNode(NO_PROGRAMA);
+        aux1->data1 = $1;
+        aux1->data2 = $2;
+
+        $$ = aux1;
+
         root = $$;
     };
 
 DeclFuncVar:
     Tipo ID DeclVar ';' DeclFuncVar {
-        Node * aux = createNode(NO_ID);
-        aux->data1 = $2;
-        $$ = aux;
+        Node * aux1 = createNode(NO_ID);
+        aux1->data1 = $2;
         
+        Node * aux2 = createNode(NO_LISTADECLVAR);
+        aux2->data1 = $1;
+        aux2->data2 = aux1;
+        aux2->data3 = $3;
+        aux2->data4 = $5;
+        
+        $$ = aux2;    
     }|
     
     Tipo ID'['INTCONST']' DeclVar ';' DeclFuncVar{
+        Node * aux1 = createNode(NO_DECLID);
+        aux1->data1 = $2;
         
+        Node * aux2 = createNode(NO_INTCONST);
+        toString(aux2->texto, $4);
+        
+        Node * aux3 = createNode(NO_DECLVETOR);
+        aux2->data1 = aux1;
+        aux2->data2 = aux2;
+        
+        Node * aux4 = createNode(NO_LISTADECLVAR);
+        aux4->data1 = $1;
+        aux4->data1 = aux3;
+        aux4->data1 = $6;
+        aux4->data1 = $8;
+
+        $$ = aux4;
     }|
 
     Tipo ID DeclFunc DeclFuncVar{
+        Node * aux1 = createNode(NO_DECLID);
+        aux1->data1 = $2;
         
+        Node * aux2 = createNode(NO_DECLFUNCVAR);
+        aux2->data1 = $1;
+        aux2->data1 = aux1;
+        aux2->data1 = $3;
+        aux2->data1 = $4;
+
+        $$ = aux2;
     }|{
         $$ = NULL;
     };
 
 DeclProg :
     PROGRAMA Bloco {
-        $$ = NULL;
+        Node * aux1 = createNode(NO_DECLPROGRAMA);
+        aux1->data1 = $2;
+
+        $$ = aux1;
     }; 
 
 DeclVar :
     ',' ID DeclVar {
-       $$ = NULL; 
+        Node * aux1 = createNode(NO_DECLID);
+        aux1->data1 = $2;
+
+        Node * aux2 = createNode(NO_DECLVAR);
+        aux2->data1 = aux1;
+        aux2->data2 = $3;
+
+        $$ = aux2; 
     }|
 
     ',' ID'['INTCONST']' DeclVar{
-        $$ = NULL;
+        Node * aux1 = createNode(NO_DECLID);
+        aux1->data1 = $2;
+
+        Node * aux2 = createNode(NO_INTCONST);
+        toString(aux2->texto, $4);
+
+        Node * aux3 = createNode(NO_DECLVETOR);
+        aux3->data1 = aux1;
+        aux3->data2 = aux2;
+
+        Node * aux4 = createNode(NO_DECLVAR);
+        aux4->data1 = aux3;
+        aux4->data2 = $6;
+
+        $$ = aux4;
     }|{
         $$ = NULL;
     };
 
 DeclFunc :
     '('ListaParametros')' Bloco{
-        $$ = NULL;
+        Node * aux1 = createNode(NO_DECLFUNC);
+        aux1->data1 = $2;
+        aux1->data2 = $4;
+
+        $$ = aux1;
     };
 
 ListaParametros :
     ListaParametrosCont{
-        $$ = NULL;
+        $$ = $1;
     }| ;
 
 ListaParametrosCont :
     Tipo ID {
-        $$ = NULL;
+        Node * aux1 = createNode(NO_DECLID);
+        aux1->data1 = $2;
+
+        Node * aux2 = createNode(NO_LISTAPARAMS);
+        aux2->data1 = $1;
+        aux2->data2 = aux1;
+
+        $$ = aux2;
     }|
     Tipo ID'['']'{
-        $$ = NULL;
+        Node * aux1 = createNode(NO_DECLID);
+        aux1->data1 = $2;
+
+        Node * aux2 = createNode(NO_VETORPARAMS);
+        aux2->data1 = aux1;
+        
+        Node * aux3 = createNode(NO_LISTAPARAMS);
+        aux3->data1 = $1;
+        aux3->data2 = aux2;
+
+        $$ = aux3;
     }|
     Tipo ID ',' ListaParametrosCont{
-        $$ = NULL;
+        Node * aux1 = createNode(NO_DECLID);
+        aux1->data1 = $2;
+
+        Node * aux2 = createNode(NO_LISTAPARAMS);
+        aux2->data1 = $1;
+        aux2->data2 = aux1;
+        aux2->data3 = $4;
+
+        $$ = aux2;
     }|
     Tipo ID'['']' ',' ListaParametrosCont{
-        $$ = NULL;
+        Node * aux1 = createNode(NO_DECLID);
+        aux1->data1 = $2;
+
+        Node * aux2 = createNode(NO_VETORPARAMS);
+        aux2->data1 = aux1;
+        
+        Node * aux3 = createNode(NO_LISTAPARAMS);
+        aux3->data1 = $1;
+        aux3->data2 = aux2;
+        aux3->data3 = $6;
+
+        $$ = aux3; 
     };
 
 Bloco :
     '{' ListaDeclVar ListaComando '}'{
-        $$ = NULL;
+        Node * aux1 = createNode(NO_BLOCO);
+        aux1->data1 = $2;
+        aux1->data2 = $3;
+
+        $$ = aux1;
+        
     }|
     '{' ListaDeclVar '}'{
-        $$ = NULL;
+        $$ = $2;
     };
 
 ListaDeclVar:
     Tipo ID DeclVar ';' ListaDeclVar{
-        $$ = NULL;
+        Node * aux1 = createNode(NO_DECLID);
+        aux1->data1 = $2;
+        
+        Node * aux2 = createNode(NO_LISTADECLVAR);
+        aux2->data1 = $1;
+        aux2->data2 = aux1;
+        aux2->data3 = $3;
+        aux2->data4 = $5;
+
+        $$ = aux2;
     }|
     Tipo ID'['INTCONST']' DeclVar ';' ListaDeclVar {
-        $$ = NULL;
+        Node * aux1 = createNode(NO_DECLID);
+        aux1->data1 = $2;
+        
+        Node * aux2 = createNode(NO_LISTADECLVAR);
+        toString(aux2->texto, $4);
+
+        Node * aux3 = createNode(NO_DECLVETOR);
+        aux3->data1 = aux1;
+        aux3->data2 = aux2;
+
+        Node * aux4 = createNode(NO_LISTADECLVAR);
+        aux4->data1 = $1;
+        aux4->data2 = aux3;
+        aux4->data3 = $6;
+        aux4->data3 = $8;
+
+        $$ = aux4;
     }|{
         $$ = NULL;
     };
 
 Tipo :
     INT {
-        $$ = NULL;
+        $$ = createNode(NO_TIPO_INT);
     }|
     CAR{
-        $$ = NULL;
+        $$ = createNode(NO_TIPO_CAR);
     };
 
 ListaComando: 
     Comando {
-        $$ = NULL;
+        $$ = $1;
     }|
     Comando ListaComando{
-        $$ = NULL;
+
+        Node * aux1 = createNode(NO_LISTACOMANDOS);
+        aux1->data1 = $1;
+        aux1->data2 = $2;
+
+        $$ = aux1;
     };
 
 Comando:
     ';'{
-        $$ = NULL;
+        $$ = createNode(NO_COMANDOVAZIO);
     }|
     Expr ';'{
-        $$ = NULL;
+        $$ = $1;
     }|
     RETORNE Expr ';'{
-        $$ = NULL;
+        Node * aux1 = createNode(NO_RETORNO);
+        aux1->data1 = $2;
+
+        $$ = aux1;
     }|
     LEIA LValueExpr ';'{
-        $$ = NULL;
+        Node * aux1 = createNode(NO_LEIA);
+        aux1->data1 = $2;
+
+        $$ = aux1;
     }|
     ESCREVA CADEIACAR ';'{
-        $$ = NULL;
+        Node * aux1 = createNode(NO_CADEIACAR);
+        textString(aux1->texto, $2);
+
+        Node * aux2 = createNode(NO_ESCREVA);
+        aux2->data1 = aux1;
+
+        $$ = aux2;
     }|
     ESCREVA Expr ';'{
-        $$ = NULL;
+        Node * aux1 = createNode(NO_ESCREVA);
+        aux1->data1 = $2;
+
+        $$ = aux1;
     }|
     NOVALINHA{
-        $$ = NULL;
+        $$ = createNode(NO_NOVALINHA);
     }|
     SE '(' Expr ')' ENTAO Comando{
-        $$ = NULL;
+        Node * aux1 = createNode(NO_SEENTAO);
+        aux1->data1 = $3;
+        aux1->data2 = $6;
+
+        $$ = aux1;
     }|
     SE '(' Expr ')' ENTAO Comando SENAO Comando{
-        $$ = NULL;
+        Node * aux1 = createNode(NO_SEENTAOSENAO);
+        aux1->data1 = $3;
+        aux1->data2 = $6;
+        aux1->data3 = $8;
+
+        $$ = aux1;
     }|
     ENQUANTO '(' Expr ')' EXECUTE Comando{
-        $$ = NULL;
+        Node * aux1 = createNode(NO_ENQUANTO);
+        aux1->data1 = $3;
+        aux1->data2 = $6;
+
+        $$ = aux1;
     }|
     Bloco{
-        $$ = NULL;
+        $$ = $1;
     };
 
 Expr:
     AssignExpr{
-        $$ = NULL;
+        $$ = $1;
     };
 
 AssignExpr:
     CondExpr{
-        $$ = NULL;
+        $$ = $1;
     }|
     LValueExpr '=' AssignExpr {
+        Node * aux1 = createNode(OP_ASSIGN);
+        aux1->data1 = $1;
+        aux1->data2 = $3;
+
         $$ = NULL;
     };
 
 CondExpr:
     OrExpr {
-        $$ = NULL;
+        $$ = $1;
     }|
     OrExpr '?' Expr ':' CondExpr{
-        $$ = NULL;
+        Node * aux1 = createNode(NO_SEENTAOSENAO);
+        aux1->data1 = $1;
+        aux1->data2 = $3;
+        aux1->data3 = $5;
+
+        $$ = aux1;
     };
 
 OrExpr:
     OrExpr OU_OP AndExpr{
-        $$ = NULL;
+        Node * aux1 = createNode(OP_OU);
+        aux1->data1 = $1;
+        aux1->data2 = $3;
+
+        $$ = aux1;
     }|
     AndExpr{
         $$ = NULL;
@@ -213,113 +394,212 @@ OrExpr:
 
 AndExpr:
     AndExpr E_OP EqExpr{
-        $$ = NULL;
+        Node * aux1 = createNode(OP_E);
+        aux1->data1 = $1;
+        aux1->data2 = $3;
+
+        $$ = aux1;
     }|
     EqExpr{
-        $$ = NULL;
+        $$ = $1;
     };
 
 EqExpr:
     EqExpr EQ_OP DesigExpr{
-        $$ = NULL;
+        Node * aux1 = createNode(OP_EQ);
+        aux1->data1 = $1;
+        aux1->data2 = $3;
+
+        $$ = aux1;
     }|
     EqExpr NE_OP DesigExpr{
-        $$ = NULL;
+        Node * aux1 = createNode(OP_DIFF);
+        aux1->data1 = $1;
+        aux1->data2 = $3;
+
+        $$ = aux1;
     }|
     DesigExpr{
-        $$ = NULL;
+        $$ = $1;
     };
 
 DesigExpr:
     DesigExpr '<' AddExpr{
-        $$ = NULL;
+        Node * aux1 = createNode(OP_MENOR);
+        aux1->data1 = $1;
+        aux1->data2 = $3;
+
+        $$ = aux1;
     }|
     DesigExpr '>' AddExpr{
-        $$ = NULL;
+        Node * aux1 = createNode(OP_MAIOR);
+        aux1->data1 = $1;
+        aux1->data2 = $3;
+
+        $$ = aux1;
     }|
     DesigExpr GE_OP AddExpr{
-        $$ = NULL;
+        Node * aux1 = createNode(OP_GEQ);
+        aux1->data1 = $1;
+        aux1->data2 = $3;
+
+        $$ = aux1;
     }|
     DesigExpr LE_OP AddExpr{
-        $$ = NULL;
+        Node * aux1 = createNode(OP_LEQ);
+        aux1->data1 = $1;
+        aux1->data2 = $3;
+
+        $$ = aux1;
     }|
     AddExpr{
-        $$ = NULL;
+        $$ = $1;
     };
 
 AddExpr:
     AddExpr '+' MulExpr {
-        $$ = NULL;
+        Node * aux1 = createNode(OP_MAIS);
+        aux1->data1 = $1;
+        aux1->data2 = $3;
+
+        $$ = aux1;
     }|
     AddExpr '-' MulExpr{
-        $$ = NULL;
+        Node * aux1 = createNode(OP_MENOS);
+        aux1->data1 = $1;
+        aux1->data2 = $3;
+
+        $$ = aux1;
     }|
     MulExpr{
-        $$ = NULL;
+        $$ = $1;
     };
 
 MulExpr:
     MulExpr '*' UnExpr{
-        $$ = NULL;
+        Node * aux1 = createNode(OP_MULT);
+        aux1->data1 = $1;
+        aux1->data2 = $3;
+
+        $$ = aux1;
     }|
     MulExpr '/' UnExpr{
-        $$ = NULL;
+        Node * aux1 = createNode(OP_DIV);
+        aux1->data1 = $1;
+        aux1->data2 = $3;
+
+        $$ = aux1;
     }|
     MulExpr '%' UnExpr{
-        $$ = NULL;
+        Node * aux1 = createNode(OP_MOD);
+        aux1->data1 = $1;
+        aux1->data2 = $3;
+
+        $$ = aux1;
     }|
     UnExpr{
-        $$ = NULL;
+        $$ = $1;
     };
 
 UnExpr:
     '-'PrimExpr{
-        $$ = NULL;
+        Node * aux1 = createNode(OP_NEG);
+        aux1->data1 = $2;
+        
+
+        $$ = aux1;
     }|
     '!'PrimExpr{
-        $$ = NULL;
+        Node * aux1 = createNode(OP_NAO);
+        aux1->data1 = $2;
+        
+
+        $$ = aux1;
     }|
     PrimExpr{
-        $$ = NULL;
+        $$ = $1;
     };
 
 LValueExpr:
     ID'[' Expr ']'{
-        $$ = NULL;
+        Node * aux1 = createNode(NO_ID);
+        aux1->data1 = $1;
+
+        Node * aux2 = createNode(NO_VETOR);
+        aux2->data1 = aux1;
+        aux2->data2 = $3;
+
+        $$ = aux2;
     }|
     ID{
-        $$ = NULL;
+        Node * aux1 = createNode(NO_ID);
+        aux1->data1 = $1;
+
+        $$ = aux1;
     };
 
 PrimExpr:
     ID'(' ListExpr ')'{
-        $$ = NULL;
+        Node * aux1 = createNode(NO_ID);
+        aux1->data1 = $1;
+
+        Node * aux2 = createNode(NO_FUNCAO);
+        aux2->data1 = aux1;
+        aux2->data2 = $3;
+
+        $$ = aux2;
     }|
     ID'('')'{
-        $$ = NULL;
+        Node * aux1 = createNode(NO_ID);
+        aux1->data1 = $1;
+
+        Node * aux2 = createNode(NO_FUNCAO);
+        aux2->data1 = aux1;
+
+        $$ = aux2;
     }|
     ID'[' Expr ']'{
-        $$ = NULL;
+        Node * aux1 = createNode(NO_ID);
+        aux1->data1 = $1;
+
+        Node * aux2 = createNode(NO_VETOR);
+        aux2->data1 = aux1;
+        aux2->data2 = $3;
+
+        $$ = aux2;
     }|
     ID{
-        $$ = NULL;
+        Node * aux1 = createNode(NO_ID);
+        aux1->data1 = $1;
+
+        $$ = aux1;
     }|
     CARCONST{
-        $$ = NULL;
+        Node * aux1 = createNode(NO_CARCONST);
+        textString(aux1->texto, $1);
+
+        $$ = aux1;
     }|
     INTCONST{
-        $$ = NULL;
+        Node * aux1 = createNode(NO_INTCONST);
+        toString(aux1->texto,$1);
+
+        $$ = aux1;
     }|
     '(' Expr ')'{
-        $$ = NULL;
+        $$ = $2;
     };
 
 ListExpr:
     AssignExpr{
-        $$ = NULL;
+        $$ = $1;
     }|
     ListExpr ',' AssignExpr{
-        $$ = NULL;
+        Node * aux1 = createNode(NO_LISTAEXPR);
+        aux1->data1 = $1;
+        aux1->data2 = $3;
+
+        $$ = aux1;
     };
 
 %%

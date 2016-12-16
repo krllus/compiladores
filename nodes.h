@@ -5,8 +5,12 @@
 #include <stdlib.h>
 #include "tipos.h"
 
+
+
 typedef struct _Node{
     NodeType nodeType;
+
+    char texto[256];
 
     struct _Node * data1;
     struct _Node * data2;
