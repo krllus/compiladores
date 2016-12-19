@@ -13,6 +13,7 @@ extern int yylineno;
 
 
 void GenerateTree();
+
 void toString(char* str, int num){
     sprintf(str, "%d", num);
 }
@@ -541,7 +542,7 @@ LValueExpr:
 PrimExpr:
     ID'(' ListExpr ')'{
         Node * aux1 = createNode(NO_ID);
-        aux1->data1 = $1;
+        aux1->lexema = $1;
 
         Node * aux2 = createNode(NO_FUNCAO);
         aux2->data1 = aux1;
@@ -551,7 +552,7 @@ PrimExpr:
     }|
     ID'('')'{
         Node * aux1 = createNode(NO_ID);
-        aux1->data1 = $1;
+        aux1->lexema = $1;
 
         Node * aux2 = createNode(NO_FUNCAO);
         aux2->data1 = aux1;
@@ -560,7 +561,7 @@ PrimExpr:
     }|
     ID'[' Expr ']'{
         Node * aux1 = createNode(NO_ID);
-        aux1->data1 = $1;
+        aux1->lexema = $1;
 
         Node * aux2 = createNode(NO_VETOR);
         aux2->data1 = aux1;
@@ -570,13 +571,13 @@ PrimExpr:
     }|
     ID{
         Node * aux1 = createNode(NO_ID);
-        aux1->data1 = $1;
+        aux1->lexema = $1;
 
         $$ = aux1;
     }|
     CARCONST{
         Node * aux1 = createNode(NO_CARCONST);
-        textString(aux1->texto, $1);
+        aux1->texto = $1;
 
         $$ = aux1;
     }|

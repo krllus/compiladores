@@ -10,14 +10,13 @@
 typedef struct _Node{
     NodeType nodeType;
 
-    char texto[256];
-
+    char * texto;
+	char * lexema;
+	
     struct _Node * data1;
     struct _Node * data2;
     struct _Node * data3;
     struct _Node * data4;
-
-    char* lexema;
 } Node;
 
 Node * createNode(NodeType nodeType){

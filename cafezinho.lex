@@ -2,6 +2,8 @@
 /* CODE BLOCK */
 #include <stdio.h>
 #include "sintatico.hpp"
+#include "tipos.h"
+#include "nodes.h"
 
 char ERROR_INVALID_CHARACTER [] = "CARACTERE INVALIDO";
 char ERROR_NOT_ENDING_COMMENT []= "COMENTARIO NAO TERMINA";
@@ -46,6 +48,10 @@ L		[a-zA-Z_]
 		/* saw closing quote - all done */
 	    BEGIN(INITIAL);		   
 	    *string_buf_ptr = '\0';
+	    
+	    yylval.str = (char*) malloc (strlen(yytext)+1);
+		strcpy(yylval.str, yytext);
+	    
 	    return (CADEIACAR);
 	    /* return string constant token type and value to parser */
 		}
@@ -104,7 +110,12 @@ L		[a-zA-Z_]
 	 */
 
 	{DIGIT}+   	{ return(INTCONST);}
-	{ID}+		{ return(ID);}
+	{ID}+		{ 
+		yylval.str = (char*) malloc (strlen(yytext)+1);
+		strcpy(yylval.str, yytext);
+		
+		return(ID);
+	}
 
 	"<="		{ return(LE_OP);}
 	">="		{ return(GE_OP);}
