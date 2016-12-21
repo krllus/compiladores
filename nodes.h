@@ -1,11 +1,8 @@
-//
-// Created by Joao Carlos Ferreira Marques on 12/12/16.
-//
+#ifndef _nodes_
+#define _nodes_
 
 #include <stdlib.h>
 #include "tipos.h"
-
-
 
 typedef struct _Node{
     NodeType nodeType;
@@ -35,3 +32,5 @@ Node * createNode(NodeType nodeType){
 
     return NULL;
 }
+
+#endif

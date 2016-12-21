@@ -2,8 +2,6 @@
 /* CODE BLOCK */
 #include <stdio.h>
 #include "sintatico.hpp"
-#include "tipos.h"
-#include "nodes.h"
 
 char ERROR_INVALID_CHARACTER [] = "CARACTERE INVALIDO";
 char ERROR_NOT_ENDING_COMMENT []= "COMENTARIO NAO TERMINA";
@@ -49,8 +47,8 @@ L		[a-zA-Z_]
 	    BEGIN(INITIAL);		   
 	    *string_buf_ptr = '\0';
 	    
-	    yylval.str = (char*) malloc (strlen(yytext)+1);
-		strcpy(yylval.str, yytext);
+	    yylval.sval = (char*) malloc (strlen(yytext)+1);
+		strcpy(yylval.sval, yytext);
 	    
 	    return (CADEIACAR);
 	    /* return string constant token type and value to parser */
@@ -100,7 +98,12 @@ L		[a-zA-Z_]
 	"senao"		{ return(SENAO);}
 	"ou"		{ return(OU_OP);}	
 
-	['].[']		{ return(CARCONST); }	
+	['].[']		{ 
+		yylval.sval = (char*) malloc (strlen(yytext)+1);
+		strcpy(yylval.sval, yytext);
+
+		return(CARCONST);
+	}	
 	\"			{ string_buf_ptr = string_buf; BEGIN(IN_STRING); }
 	/**
 	 * c string_literal:
@@ -109,10 +112,15 @@ L		[a-zA-Z_]
 	 * L?\"(\\.|[^\\"])*\"	{ return(CADEIACAR); }
 	 */
 
-	{DIGIT}+   	{ return(INTCONST);}
+	{DIGIT}+   	{
+		yylval.sval = (char*) malloc (strlen(yytext)+1);
+		strcpy(yylval.sval, yytext);
+
+		return(INTCONST);
+	}
 	{ID}+		{ 
-		yylval.str = (char*) malloc (strlen(yytext)+1);
-		strcpy(yylval.str, yytext);
+		yylval.sval = (char*) malloc (strlen(yytext)+1);
+		strcpy(yylval.sval, yytext);
 		
 		return(ID);
 	}
