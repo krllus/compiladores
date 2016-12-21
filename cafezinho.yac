@@ -12,7 +12,6 @@ void yyerror(const char *s);
 
 extern int yylineno;
 
-
 void GenerateTree();
 
 Node * root;
@@ -21,16 +20,16 @@ Node * root;
 
 %union{
     struct _Node * node;
-    char *  sval;
-    int     ival;
+    char *  strVal;
+    int     intVal;
 }
 
 %start Programa /* Inidica que o simbolo incial da gramatica e programm */
 
-%token <sval> INTCONST 
-%token <sval> ID
-%token <sval> CARCONST 
-%token <sval> CADEIACAR
+%token <strVal> ID
+%token <intVal> INTCONST 
+%token <strVal> CARCONST 
+%token <strVal> CADEIACAR
 %token PROGRAMA RETORNE 
 %token INT CAR 
 %token LEIA ESCREVA
@@ -62,7 +61,7 @@ Programa:
 DeclFuncVar:
     Tipo ID DeclVar ';' DeclFuncVar {
         Node * aux1 = createNode(NO_ID);
-        aux1->lexema = $2;
+        aux1->lexemaStr = $2;
         
         Node * aux2 = createNode(NO_LISTADECLVAR);
         aux2->data1 = $1;
@@ -75,10 +74,10 @@ DeclFuncVar:
     
     Tipo ID'['INTCONST']' DeclVar ';' DeclFuncVar{
         Node * aux1 = createNode(NO_DECLID);
-        aux1->lexema = $2;
+        aux1->lexemaStr = $2;
         
         Node * aux2 = createNode(NO_INTCONST);
-        aux2->texto = $4;
+        aux2->lexemaInt = $4;
         
         Node * aux3 = createNode(NO_DECLVETOR);
         aux2->data1 = aux1;
@@ -95,7 +94,7 @@ DeclFuncVar:
 
     Tipo ID DeclFunc DeclFuncVar{
         Node * aux1 = createNode(NO_DECLID);
-        aux1->lexema = $2;
+        aux1->lexemaStr = $2;
         
         Node * aux2 = createNode(NO_DECLFUNCVAR);
         aux2->data1 = $1;
@@ -119,7 +118,7 @@ DeclProg :
 DeclVar :
     ',' ID DeclVar {
         Node * aux1 = createNode(NO_DECLID);
-        aux1->lexema = $2;
+        aux1->lexemaStr = $2;
 
         Node * aux2 = createNode(NO_DECLVAR);
         aux2->data1 = aux1;
@@ -130,10 +129,10 @@ DeclVar :
 
     ',' ID'['INTCONST']' DeclVar{
         Node * aux1 = createNode(NO_DECLID);
-        aux1->lexema = $2;
+        aux1->lexemaStr = $2;
 
         Node * aux2 = createNode(NO_INTCONST);
-        aux2->texto = $4;
+        aux2->lexemaInt = $4;
 
         Node * aux3 = createNode(NO_DECLVETOR);
         aux3->data1 = aux1;
@@ -167,7 +166,7 @@ ListaParametros :
 ListaParametrosCont :
     Tipo ID {
         Node * aux1 = createNode(NO_DECLID);
-        aux1->lexema = $2;
+        aux1->lexemaStr = $2;
 
         Node * aux2 = createNode(NO_LISTAPARAMS);
         aux2->data1 = $1;
@@ -177,7 +176,7 @@ ListaParametrosCont :
     }|
     Tipo ID'['']'{
         Node * aux1 = createNode(NO_DECLID);
-        aux1->lexema = $2;
+        aux1->lexemaStr = $2;
 
         Node * aux2 = createNode(NO_VETORPARAMS);
         aux2->data1 = aux1;
@@ -190,7 +189,7 @@ ListaParametrosCont :
     }|
     Tipo ID ',' ListaParametrosCont{
         Node * aux1 = createNode(NO_DECLID);
-        aux1->lexema = $2;
+        aux1->lexemaStr = $2;
 
         Node * aux2 = createNode(NO_LISTAPARAMS);
         aux2->data1 = $1;
@@ -201,7 +200,7 @@ ListaParametrosCont :
     }|
     Tipo ID'['']' ',' ListaParametrosCont{
         Node * aux1 = createNode(NO_DECLID);
-        aux1->lexema = $2;
+        aux1->lexemaStr = $2;
 
         Node * aux2 = createNode(NO_VETORPARAMS);
         aux2->data1 = aux1;
@@ -230,7 +229,7 @@ Bloco :
 ListaDeclVar:
     Tipo ID DeclVar ';' ListaDeclVar{
         Node * aux1 = createNode(NO_DECLID);
-        aux1->lexema = $2;
+        aux1->lexemaStr = $2;
         
         Node * aux2 = createNode(NO_LISTADECLVAR);
         aux2->data1 = $1;
@@ -242,10 +241,10 @@ ListaDeclVar:
     }|
     Tipo ID'['INTCONST']' DeclVar ';' ListaDeclVar {
         Node * aux1 = createNode(NO_DECLID);
-        aux1->lexema = $2;
+        aux1->lexemaStr = $2;
         
         Node * aux2 = createNode(NO_INTCONST);
-        aux2->texto = $4;
+        aux2->lexemaInt = $4;
 
         Node * aux3 = createNode(NO_DECLVETOR);
         aux3->data1 = aux1;
@@ -308,7 +307,7 @@ Comando:
     }|
     ESCREVA CADEIACAR ';'{
         Node * aux1 = createNode(NO_CADEIACAR);
-        aux1->texto = $2;
+        aux1->lexemaStr = $2;
 
         Node * aux2 = createNode(NO_ESCREVA);
         aux2->data1 = aux1;
@@ -523,7 +522,7 @@ UnExpr:
 LValueExpr:
     ID'[' Expr ']'{
         Node * aux1 = createNode(NO_ID);
-        aux1->lexema = $1;
+        aux1->lexemaStr = $1;
 
         Node * aux2 = createNode(NO_VETOR);
         aux2->data1 = aux1;
@@ -533,7 +532,7 @@ LValueExpr:
     }|
     ID{
         Node * aux1 = createNode(NO_ID);
-        aux1->lexema = $1;
+        aux1->lexemaStr = $1;
 
         $$ = aux1;
     };
@@ -541,7 +540,7 @@ LValueExpr:
 PrimExpr:
     ID'(' ListExpr ')'{
         Node * aux1 = createNode(NO_ID);
-        aux1->lexema = $1;
+        aux1->lexemaStr = $1;
 
         Node * aux2 = createNode(NO_FUNCAO);
         aux2->data1 = aux1;
@@ -551,7 +550,7 @@ PrimExpr:
     }|
     ID'('')'{
         Node * aux1 = createNode(NO_ID);
-        aux1->lexema = $1;
+        aux1->lexemaStr = $1;
 
         Node * aux2 = createNode(NO_FUNCAO);
         aux2->data1 = aux1;
@@ -560,7 +559,7 @@ PrimExpr:
     }|
     ID'[' Expr ']'{
         Node * aux1 = createNode(NO_ID);
-        aux1->lexema = $1;
+        aux1->lexemaStr = $1;
 
         Node * aux2 = createNode(NO_VETOR);
         aux2->data1 = aux1;
@@ -570,19 +569,19 @@ PrimExpr:
     }|
     ID{
         Node * aux1 = createNode(NO_ID);
-        aux1->lexema = $1;
+        aux1->lexemaStr = $1;
 
         $$ = aux1;
     }|
     CARCONST{
         Node * aux1 = createNode(NO_CARCONST);
-        aux1->texto = $1;
+        aux1->lexemaStr = $1;
 
         $$ = aux1;
     }|
     INTCONST{
         Node * aux1 = createNode(NO_INTCONST);
-        aux1->texto = $1;
+        aux1->lexemaInt = $1;
 
         $$ = aux1;
     }|

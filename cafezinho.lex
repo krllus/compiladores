@@ -47,8 +47,8 @@ L		[a-zA-Z_]
 	    BEGIN(INITIAL);		   
 	    *string_buf_ptr = '\0';
 	    
-	    yylval.sval = (char*) malloc (strlen(yytext)+1);
-		strcpy(yylval.sval, yytext);
+	    yylval.strVal = (char*) malloc (strlen(yytext)+1);
+		strcpy(yylval.strVal, yytext);
 	    
 	    return (CADEIACAR);
 	    /* return string constant token type and value to parser */
@@ -99,11 +99,12 @@ L		[a-zA-Z_]
 	"ou"		{ return(OU_OP);}	
 
 	['].[']		{ 
-		yylval.sval = (char*) malloc (strlen(yytext)+1);
-		strcpy(yylval.sval, yytext);
+		yylval.strVal = (char*) malloc (strlen(yytext)+1);
+		strcpy(yylval.strVal, yytext);
 
 		return(CARCONST);
-	}	
+	}
+
 	\"			{ string_buf_ptr = string_buf; BEGIN(IN_STRING); }
 	/**
 	 * c string_literal:
@@ -113,14 +114,14 @@ L		[a-zA-Z_]
 	 */
 
 	{DIGIT}+   	{
-		yylval.sval = (char*) malloc (strlen(yytext)+1);
-		strcpy(yylval.sval, yytext);
+		
+		yylval.intVal = atoi(yytext);
 
 		return(INTCONST);
 	}
 	{ID}+		{ 
-		yylval.sval = (char*) malloc (strlen(yytext)+1);
-		strcpy(yylval.sval, yytext);
+		yylval.strVal = (char*) malloc (strlen(yytext)+1);
+		strcpy(yylval.strVal, yytext);
 		
 		return(ID);
 	}

@@ -7,8 +7,8 @@
 typedef struct _Node{
     NodeType nodeType;
 
-    char * texto;
-	char * lexema;
+	char * lexemaStr;
+    int    lexemaInt;
 	
     struct _Node * data1;
     struct _Node * data2;
